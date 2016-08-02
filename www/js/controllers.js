@@ -209,4 +209,16 @@ angular.module('app.controllers', [])
   };
 
 })
+
+.controller('menuCtrl', function($scope, AuthService, $state, $ionicPopup) {
+    $scope.logout = function() {
+    AuthService.logout();
+    $state.go('login');
+    var alertPopup = $ionicPopup.alert({
+      title: 'Logout',
+      template: "See u soon <3"
+    });
+  };;
+      $state.go('login');
+})
 ;

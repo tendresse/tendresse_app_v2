@@ -1,5 +1,5 @@
 <ion-side-menus enable-menu-with-back-views="false">
-    <ion-side-menu-content>
+    <ion-side-menu-content >
         <ion-nav-bar class="bar-stable">
             <ion-nav-back-button></ion-nav-back-button>
             <ion-nav-buttons side="left">
@@ -12,7 +12,7 @@
         <ion-header-bar class="bar-stable">
             <div class="title">Tendresse</div>
         </ion-header-bar>
-        <ion-content padding="false" class="side-menu-left has-header">
+        <ion-content ng-controller="menuCtrl" padding="false" class="side-menu-left has-header">
             <ion-list id="tendresse-null" class=" ">
                 <ion-item class="item-icon-left  " id="tendresse-list-item1" ui-sref="tendresse.home" menu-close="">
                     <i class="icon ion-ionic"></i>Home</ion-item>

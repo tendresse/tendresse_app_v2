@@ -1,12 +1,32 @@
 angular.module('app.services', [])
 
-.factory('BlankFactory', [function(){
+.factory('Socket', ['AuthService', function(AuthService) {
+  var socket;
 
+  var connect = function(){
+    token = AuthService.token();
+    if(token){
+      var socket = io.connect('https://tendresse.herokuapp.com/api/v1',token);
+    }
+    socket.on('connect', function(){
+      // gérer si connect fail
+      // ioSocket.disconnect();
+      // debug = taper ça dans console window.localStorage.debug = '*';
+    });
+  }
+  var disconnect = function(){
+    ioSocket.disconnect();
+  };
+  return {
+    socket : function(){return socket;},
+    disconnect: disconnect,
+    connect: connect
+  }
 }])
 
-.service('AuthService', ['$http', '$q',function($http, $q){
+.service('AuthService', ['$http', '$q', 'Socket', function($http, $q, Socket){
 
-  var LOCAL_TOKEN_KEY = 'yourTokenKey';
+  var LOCAL_TOKEN_KEY = 'tendresse_token_user';
   var USERNAME;
   var username = '';
   var isAuthenticated = false;
@@ -114,6 +134,7 @@ angular.module('app.services', [])
 
   var logout = function() {
     destroyUserCredentials();
+    Socket.disconnect();
   };
 
   var isAuthorized = function() {
@@ -127,7 +148,8 @@ angular.module('app.services', [])
     login: login,
     logout: logout,
     isAuthenticated: function() {return isAuthenticated;},
-    username: function() {return window.localStorage.getItem(USERNAME);},
+    token: function() {return window.localStorage.getItem(USERNAME);},
+    username: function() {return window.localStorage.getItem(LOCAL_TOKEN_KEY);},
     checkToken: checkToken
   };
 
@@ -227,52 +249,23 @@ angular.module('app.services', [])
 
 }])
 
-.factory('MeFactory', ['$http', '$q', 'TendresseFactory', function($http, $q, TendresseFactory, AuthService){
+.factory('MeFactory', ['$http', '$q', 'TendresseFactory', 'AuthService', 'Socket', function($http, $q, TendresseFactory, AuthService, Socket){
     var friends = [];
     var achievements = [];
-    var TOKEN;
 
     var storePushToken = function(d_token){
-      window.localStorage.setItem(TOKEN, token);
+      window.localStorage.setItem('device_token', token);
     }
 
     var updateDevice = function() {
-      return $q(function(resolve, reject) {
-        var req = {
-          method: 'PUT',
-          url: 'http://localhost:5000/api/v1/users/me/device',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          data: {
-            "device_token": window.localStorage.getItem(TOKEN)
-          }
-        };
-        $http(req).success(function(resp){
-              resolve('device updated');
-        }).error(function(error){
-              reject('error updating device');
-        });
-      });
+        Socket.socket().emit("update device", window.localStorage.getItem('device_token'));
+        // Socket.socket().on('update device', function(reponse) { }
     };
 
     var addFriend = function(username) {
-      return $q(function(resolve, reject) {
-        var req = {
-          method: 'POST',
-          url: 'http://localhost:5000/api/v1/users/me/friends',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          data: {
-            "username_friend": username
-          }
-        };
-        $http(req).success(function(resp){
-              resolve('friend added');
-        }).error(function(error){
-              reject('error adding friend');
-        });
+      Socket.socket().emit("add friend",username);
+      Socket.socket().on('add friend', function(response) {
+        return response;
       });
     };
 
