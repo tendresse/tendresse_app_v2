@@ -1,0 +1,30 @@
+<ion-view title="home" hide-nav-bar="true" hide-back-button="true" id="page1" class=" ">
+    <ion-content padding="true" class="manual-ios-statusbar-padding"></ion-content>
+    <ion-refresher
+      pulling-text="Pull to refresh..."
+      on-refresh="doRefresh()">
+    </ion-refresher>
+      <div class="item item-divider">
+          Friends :
+      </div>
+      <ion-list id="home-list2" class=" " ng-repeat="friend in friends">
+          <ion-item ng-class="$index % 2 == '0' ? 'item-assertive' : 'item-dark'" class="text-center" on-hold="profile('{{friend.username}}')" ng-click="sendTendresse('{{friend.username}}',$event)">
+                  {{friend.username}}
+          </ion-item>
+      </ion-list>
+      <ion-list id="home-listt" class=" " ng-hide="friends.length">
+          <ion-item class="item-icon-right">
+              Swipe right to see your menu
+              <i class="icon ion-ios-arrow-back"></i>
+          </ion-item>
+          <ion-item class="item-icon-right">
+              Add some friends from your profile
+              <i class="icon ion-person-add"></i>
+          </ion-item>
+          <ion-item class="item-icon-right" >
+              Pull to refresh your tendresses
+              <i class="icon ion-android-refresh"></i>
+          </ion-item>
+      </ion-list>
+    </ion-content>
+</ion-view>

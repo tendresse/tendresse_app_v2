@@ -1,0 +1,18 @@
+<ion-view title="Signup" id="page5" class=" ">
+    <ion-content padding="true" class="has-header">
+        <form id="signup-form2" class="list ">
+            <ion-list id="signup-list2" class=" ">
+                <label class="item item-input " id="signup-input4">
+                    <span class="input-label">Username</span>
+                    <input type="text" placeholder="" ng-model="data.username">
+                </label>
+                <label class="item item-input " id="signup-input5">
+                    <span class="input-label">Password</span>
+                    <input type="text" placeholder="" ng-model="data.password">
+                </label>
+            </ion-list>
+            <a ng-click="sign(data)" id="signup-button3" class=" button button-stable  button-block ">Sign up</a>
+            <a ui-sref="login" id="signup-button4" class=" button button-positive  button-block button-clear ">Already have an account ?</a>
+        </form>
+    </ion-content>
+</ion-view>

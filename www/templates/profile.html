@@ -1,0 +1,29 @@
+<ion-view title="profile" hide-nav-bar="true" hide-back-button="true" id="page2" class=" ">
+  <ion-content padding="true" class="manual-ios-statusbar-padding">
+  <ion-refresher
+    pulling-text="Pull to refresh..."
+    on-refresh="doRefresh()">
+  </ion-refresher>
+    <h3 id="me-heading5" style="color:#EC8ECF;font-weight:600;font-style:italic;text-align:center;" class=" ">YOU</h3>
+    <div class="list">
+      <div class="item item-input-inset">
+        <label class="item-input-wrapper">
+          <input type="text" placeholder="your friend's username" ng-model="data.username_friend">
+        </label>
+        <button class="button button-small button-positive" ng-click="addFriend(data)">ADD</button>
+      </div>
+    </div>
+    <ion-list id="me-list8" ng-repeat="achievement in achievements">
+        <ion-item class="item-avatar  " id="achievement-{{achievement.id}}">
+            <img ng-src="img/{{achievement.icon}}" onerror="this.src='img/WW04imNRnDkUJx5DkANA_fist.png'">
+            <h2>{{achievement.title}}</h2>
+            <p>{{achievement.type_of}} {{achievement.condition}} #{{achievement.tags[0]}} tendresses</p>
+        </ion-item>
+    </ion-list>
+    <ion-item ng-hide="achievements.length" class="item-avatar  " id="achievement-{{achievement}}">
+        <img src="img/WW04imNRnDkUJx5DkANA_fist.png">
+        <h2>No achievements :( </h2>
+        <p>Spread more tendresse !</p>
+    </ion-item>
+  </ion-content>
+</ion-view>

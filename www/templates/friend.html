@@ -1,0 +1,27 @@
+<ion-view title="friend" hide-nav-bar="true" hide-back-button="true" id="page3" class=" ">
+    <ion-content padding="true" class="manual-ios-statusbar-padding"></ion-content>
+    <div class="bar bar-header bar-calm">
+      <button class="button button-icon button-clear ion-ios-arrow-back" ui-sref="tendresse.home">
+      </button>
+      <h1 class="title">{{username}}</h1>
+    </div>
+    <div class="content has-header  padding">
+        <ion-list id="friend-list10" class=" " ng-repeat="achievement in achievements">
+            <ion-item class="item-avatar  " id="achievement-{{achievement.id}}">
+                <img ng-src="img/{{achievement.icon}}" onerror="this.src='img/WW04imNRnDkUJx5DkANA_fist.png'">
+                <h2>{{achievement.title}}</h2>
+                <p>{{achievement.type_of}} {{achievement.condition}} #{{achievement.tags[0]}} tendresses</p>
+            </ion-item>
+        </ion-list>
+        <ion-item ng-hide="achievements.length" class="item-avatar  " id="achievement-{{achievement}}">
+            <img src="img/WW04imNRnDkUJx5DkANA_fist.png">
+            <h2>No achievements :(</h2>
+            <p>Send more tendresses to help !</p>
+        </ion-item>
+        <div class="spacer" style="width: 300px; height: 37px;"></div>
+    </div>
+    </ion-content>
+    <div class="bar bar-footer bar-assertive" ng-click="removeFriend()">
+      <div class="title">Unfriend</div>
+    </div>
+</ion-view>

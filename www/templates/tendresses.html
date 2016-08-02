@@ -1,0 +1,22 @@
+<ion-view title="tendresses" hide-nav-bar="true" id="page4" style="background-color:#A9E2E2;" class=" ">
+    <ion-content padding="false" class="manual-ios-statusbar-padding" on-swipe-left="onSwipeLeft()" on-swipe-right="onSwipeRight()">
+      <ion-refresher
+        pulling-text="Pull to refresh..."
+        on-refresh="doRefresh()">
+      </ion-refresher>
+        <div class="">
+            <img ng-src="{{ gifUrl }}" src="img/R8NmRziMRxKuqNnHOsDM_11.jpg" width="100%" height="100%" style="display: block; margin-left: auto;">
+        </div>
+        <ion-list id="tendresses-list6" class=" manual-list-fullwidth " ng-repeat="(username, l_tendresses) in tendresses">
+            <ion-item class="item-icon-left" ng-click="displayTendresses(l_tendresses.tendresses)" ng-hide="l_tendresses.tendresses.length == 0">
+                <i ng-hide="l_tendresses.isFriend" class="icon ion-person-add" ng-click="addFriend(username,l_tendresses)"></i>
+                {{username}}
+                <span class="badge badge-assertive">{{ l_tendresses.tendresses.length }}</span>
+            </ion-item>
+        </ion-list>
+        <ion-item ng-hide="size(tendresses)" class="item-icon-right">
+            You have no tendresses :(
+            <i class="icon ion-heart-broken"></i>
+        </ion-item>
+    </ion-content>
+</ion-view>
