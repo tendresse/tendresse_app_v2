@@ -1,30 +1,26 @@
 angular.module('app.services', [])
 
-.factory('Socket', ['AuthService', function(AuthService) {
-  var socket;
+.factory('mySocket', ['socketFactory', function(socketFactory) {
 
-  var connect = function(){
-    token = AuthService.token();
-    if(token){
-      var socket = io.connect('https://tendresse.herokuapp.com/api/v1',token);
-    }
-    socket.on('connect', function(){
-      // gérer si connect fail
-      // ioSocket.disconnect();
-      // debug = taper ça dans console window.localStorage.debug = '*';
+  var myIoSocket;
+
+  var connect = function(token){
+    console.log(token);
+    myIoSocket = io('http://127.0.0.1:8000/api/v1', { token: token });
+    myIoSocket.connect();
+    mySocket = socketFactory({
+      ioSocket: myIoSocket
     });
   }
-  var disconnect = function(){
-    ioSocket.disconnect();
-  };
-  return {
-    socket : function(){return socket;},
-    disconnect: disconnect,
+
+  return{
+    socket: function(){return mySocket},
     connect: connect
   }
+
 }])
 
-.service('AuthService', ['$http', '$q', 'Socket', function($http, $q, Socket){
+.service('AuthService', ['$http', '$q','mySocket', function($http, $q, mySocket){
 
   var LOCAL_TOKEN_KEY = 'tendresse_token_user';
   var USERNAME;
@@ -66,7 +62,7 @@ angular.module('app.services', [])
     	// Build the request object
   		var req = {
   		  method: 'PUT',
-  		  url: 'http://localhost:5000/api/v1/users',
+  		  url: 'http://localhost:8000/api/v1/users',
   		  headers: {
   		    'Content-Type': 'application/json'
   		  },
@@ -78,7 +74,8 @@ angular.module('app.services', [])
 
   		// Make the API call
   		$http(req).success(function(resp){
-  		    storeUserCredentials(resp.username,resp.token);
+  		      storeUserCredentials(resp.username,resp.token);
+            mySocket.connect(window.localStorage.getItem(LOCAL_TOKEN_KEY));
           	resolve('Login success.');
   		}).error(function(error){
             reject('Login Failed.');
@@ -91,7 +88,7 @@ angular.module('app.services', [])
     	// Build the request object
 		var req = {
 		  method: 'POST',
-		  url: 'http://localhost:5000/api/v1/users',
+		  url: 'http://localhost:8000/api/v1/users',
 		  headers: {
 		    'Content-Type': 'application/json'
 		  },
@@ -117,7 +114,7 @@ angular.module('app.services', [])
           if (token) {
             var req = {
               method: 'GET',
-              url: 'http://localhost:5000/api/v1/users/me/reset_token',
+              url: 'http://localhost:8000/api/v1/users/me/reset_token',
               headers: {
                 'Content-Type': 'application/json'
               }
@@ -177,7 +174,7 @@ angular.module('app.services', [])
       return $q(function(resolve, reject) {
         var req = {
           method: 'GET',
-          url: 'http://localhost:5000/api/v1/users/me/pending',
+          url: 'http://localhost:8000/api/v1/users/me/pending',
         };
         $http(req).success(function(resp){
               tendresses = resp;
@@ -202,7 +199,7 @@ angular.module('app.services', [])
       return $q(function(resolve, reject) {
         var req = {
           method: 'DELETE',
-          url: 'http://localhost:5000/api/v1/users/me/pending',
+          url: 'http://localhost:8000/api/v1/users/me/pending',
           headers: {
             'Content-Type': 'application/json'
           },
@@ -222,7 +219,7 @@ angular.module('app.services', [])
       return $q(function(resolve, reject) {
         var req = {
           method: 'POST',
-          url: 'http://localhost:5000/api/v1/users/me/send',
+          url: 'http://localhost:8000/api/v1/users/me/send',
           headers: {
             'Content-Type': 'application/json'
           },
@@ -249,7 +246,7 @@ angular.module('app.services', [])
 
 }])
 
-.factory('MeFactory', ['$http', '$q', 'TendresseFactory', 'AuthService', 'Socket', function($http, $q, TendresseFactory, AuthService, Socket){
+.factory('MeFactory', ['$http', '$q', 'TendresseFactory', 'AuthService', 'mySocket', function($http, $q, TendresseFactory, AuthService, mySocket){
     var friends = [];
     var achievements = [];
 
@@ -258,13 +255,13 @@ angular.module('app.services', [])
     }
 
     var updateDevice = function() {
-        Socket.socket().emit("update device", window.localStorage.getItem('device_token'));
-        // Socket.socket().on('update device', function(reponse) { }
+        mySocket.socket().emit("update device", window.localStorage.getItem('device_token'));
+        // mySocket.socket().on('update device', function(reponse) { }
     };
 
     var addFriend = function(username) {
-      Socket.socket().emit("add friend",username);
-      Socket.socket().on('add friend', function(response) {
+      mySocket.socket().emit("add friend",username);
+      mySocket.socket().on('add friend', function(response) {
         return response;
       });
     };
@@ -274,7 +271,7 @@ angular.module('app.services', [])
         console.log("friend username = ",username);
         var req = {
           method: 'DELETE',
-          url: 'http://localhost:5000/api/v1/users/me/friends',
+          url: 'http://localhost:8000/api/v1/users/me/friends',
           headers: {
             'Content-Type': 'application/json'
           },
@@ -295,7 +292,7 @@ angular.module('app.services', [])
       return $q(function(resolve, reject) {
         var req = {
     		  method: 'GET',
-    		  url: 'http://localhost:5000/api/v1/users/me/friends',
+    		  url: 'http://localhost:8000/api/v1/users/me/friends',
     		};
     		$http(req).success(function(resp){
     		    friends = resp;
@@ -307,14 +304,14 @@ angular.module('app.services', [])
     };
 
     var getProfile = function(username){
-      return $http.get('http://localhost:5000/api/v1/users/'+username+'/profile');
+      return $http.get('http://localhost:8000/api/v1/users/'+username+'/profile');
     }
 
     var refreshProfile = function(username){
       return $q(function(resolve, reject) {
         var req = {
           method: 'GET',
-          url: 'http://localhost:5000/api/v1/users/'+username+'/profile',
+          url: 'http://localhost:8000/api/v1/users/'+username+'/profile',
         };
         $http(req).success(function(resp){
             achievements = resp.achievements;

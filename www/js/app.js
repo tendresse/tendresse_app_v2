@@ -21,12 +21,12 @@ angular.module('app', ['ionic','ionic.service.core', 'app.controllers', 'app.rou
     }
     var push = new Ionic.Push({
      "debug": true
-   });
+     });
 
-   push.register(function(token) {
-     push.saveToken(token);
-     MeFactory.storePushToken(token);
-   });
+     push.register(function(token) {
+       push.saveToken(token);
+       MeFactory.storePushToken(token);
+     });
 
     $ionicPlatform.registerBackButtonAction(function(event) {
       if (true) { // your check here

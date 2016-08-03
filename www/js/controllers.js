@@ -30,8 +30,8 @@ angular.module('app.controllers', [])
 
   $scope.$on('$ionicView.enter', function(){
     AuthService.checkToken().then(function(authenticated) {
-      MeFactory.updateDevice();
-      goToHome();
+      // MeFactory.updateDevice();
+      // goToHome();
     }, function(err) {
       console.log("token is not valid anymore");
     });
@@ -50,7 +50,7 @@ angular.module('app.controllers', [])
   $scope.login = function(data) {
     AuthService.login(data.username, data.password).then(function(authenticated) {
       $scope.data.password = "";
-      MeFactory.updateDevice();
+      // MeFactory.updateDevice();
       goToHome();
     }, function(err) {
       var alertPopup = $ionicPopup.alert({
